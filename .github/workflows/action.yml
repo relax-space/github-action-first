@@ -1,0 +1,23 @@
+name: hello-github-actions
+on: [push]
+jobs:
+  first:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "${{github.event_name}} ${{runner.os}}  ${{github.ref}}  ${{github.repository}}"
+      - uses: actions/checkout@v3
+      - name: print
+        run: |
+          ls -l
+          echo "${{github.repository}} ${{ github.workspace }} ${{job.status}}"
+        # job之间传值
+      - id: pass_param
+        run: echo "::set-output name=v_name::good"
+    outputs:
+      v_name: ${{ steps.pass_param.outputs.v_name }}
+  second:
+    needs: first
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "${{needs.first.outputs.v_name}}"

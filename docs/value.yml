@@ -1,0 +1,17 @@
+# 不同job之间传值
+name: hello-github-actions
+on: [push]
+jobs:
+  first:
+    runs-on: ubuntu-latest
+    steps:
+      - id: pass_param
+        run: echo "::set-output name=v_name::good"
+    # job之间传值
+    outputs:
+     v_name: ${{ steps.pass_param.outputs.v_name }}
+  second:
+    needs: first
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "${{needs.first.outputs.v_name}}"
